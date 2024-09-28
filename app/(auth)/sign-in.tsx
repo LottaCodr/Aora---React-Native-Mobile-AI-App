@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 
-import { View, Text, ScrollView, Image } from 'react-native'
+import { View, Text, ScrollView, Image, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '@/constants'
 import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { signIn } from '@/lib/appwrite'
 
 
 
@@ -18,7 +19,24 @@ const SignIn = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const submit = () => {
+  const submit = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert('Error', 'Please fill in all the fields')
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const login = await signIn(form.email, form.password)
+      router.replace('/home')
+
+    } catch (error: any) {
+      console.error(error)
+      Alert.alert('Error', error.message)
+
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -39,21 +57,21 @@ const SignIn = () => {
             title="Email"
             value={form.email}
             handleChangeText={(e: string) => setForm({ ...form, email: e })}
-            otherStyles="mt-7" placeholder={'johndoe@email.com'}   
-            keyboardType='email-address'         
+            otherStyles="mt-7" placeholder={'johndoe@email.com'}
+            keyboardType='email-address'
           />
           <FormField
             title="Password"
             value={form.password}
             handleChangeText={(e: string) => setForm({ ...form, password: e })}
-            otherStyles="mt-7" placeholder={'***********'}           
+            otherStyles="mt-7" placeholder={'***********'}
           />
 
           <CustomButton
             title='Sign In'
             handlePress={submit}
             containerStyles='mt-7'
-            isLoading={isSubmitting} textStyles={''}          />
+            isLoading={isSubmitting} textStyles={''} />
 
           <View className="justify-center pt-5 flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">Don't have an account?</Text>
