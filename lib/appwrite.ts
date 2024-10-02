@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import * as sdk from 'react-native-appwrite';
 
 
@@ -18,7 +19,7 @@ export const config = {
     projectId: "66f4a78d0009c644a7af",
     databaseId: '66f4acad0008d83de0fc',
     usersCollectionId: "66f4ad120017cf02ae18",
-    videosCollectionId: VIDEOS_COLLECTION_ID!,
+    videosCollectionId: "66f4ad2d0039d5b55cc8",
     storageId: STORAGE_ID!
 }
 
@@ -103,4 +104,18 @@ export async function getCurrentUser() {
         return null;
 
     }
-}
+};
+
+export async function getAllPosts () {
+    try {
+        const post = await database.listDocuments(
+            config.databaseId,
+            config.videosCollectionId,
+        )
+
+        return post.documents
+        
+    } catch (error: any) {
+        Alert.alert('Error:', error.message)
+    }
+};

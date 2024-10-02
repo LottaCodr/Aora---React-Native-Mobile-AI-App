@@ -1,16 +1,31 @@
+import EmptyState from '@/components/EmptyState'
 import SearchInput from '@/components/SearchInput'
 import Trending from '@/components/Trending'
 import { images } from '@/constants'
-import { View, Text, FlatList, Image } from 'react-native'
+import { getAllPosts } from '@/lib/appwrite'
+import useAppwrite from '@/lib/useAppwrite'
+import {  useState } from 'react'
+import { View, Text, FlatList, Image, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Home = () => {
+const {data: posts} = useAppwrite(getAllPosts)
+  const [refreshing, setRefreshing] = useState(false)
+ 
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    //recall videos -> if any new videos appeared
+    setRefreshing(false)
+  }
+
+  console.log(posts)
+
   return (
-    <SafeAreaView className='bg-primary'>
+    <SafeAreaView className='bg-primary h-full'>
 
       <FlatList
-        // data={[{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 },]}
-        data={[]}
+        data={[{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 },]}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Text className='text-3xl text-white'>{item.id}</Text>
@@ -26,36 +41,44 @@ const Home = () => {
 
               <View className='mt-1.5'>
                 <Image
-                source={images.logoSmall}
-                className='w-9 h-10'
-                resizeMode='contain'
+                  source={images.logoSmall}
+                  className='w-9 h-10'
+                  resizeMode='contain'
                 />
               </View>
             </View>
 
-            <SearchInput/>
+            <SearchInput />
 
             <View className='w-full flex-1 pt-5 pb-8'>
               <Text className='text-lg font-pregular text-gray-100 mb-3'>Latest Videos</Text>
             </View>
 
-            <Trending 
-            posts={[
-              {
-              id: "Me",
-              title: ''
-            }, {
-              id: "Them",
-              title: ''
-            }
-          ] }
+            <Trending
+              posts={[
+                //   {
+                //   id: "Me",
+                //   title: ''
+                // }, {
+                //   id: "Them",
+                //   title: ''
+                // }
+              ]
+              }
             />
           </View>
         )}
 
         ListEmptyComponent={() => (
-          <Text className='text-white'> Empty </Text>
+          <EmptyState
+            title="No Videos Found"
+            subtitle="Be the first to upload a video"
+          />
         )}
+
+        refreshControl={<RefreshControl
+          refreshing={refreshing} onRefresh={onRefresh}
+        />}
       />
     </SafeAreaView>
   )
