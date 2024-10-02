@@ -1,5 +1,6 @@
 import * as sdk from 'react-native-appwrite';
 
+
 export const {
     PROJECT_ID,
     PLATFORM,
@@ -12,11 +13,11 @@ export const {
 
 
 export const config = {
-    endpoint: ENDPOINT!,
+    endpoint: "https://cloud.appwrite.io/v1",
     platform: PLATFORM!,
-    projectId: PROJECT_ID!,
-    databaseId: DATABASE_ID!,
-    usersCollectionId: USERS_COLLECTION_ID!,
+    projectId: "66f4a78d0009c644a7af",
+    databaseId: '66f4acad0008d83de0fc',
+    usersCollectionId: "66f4ad120017cf02ae18",
     videosCollectionId: VIDEOS_COLLECTION_ID!,
     storageId: STORAGE_ID!
 }
@@ -26,36 +27,36 @@ const client = new sdk.Client();
 client
     .setEndpoint(config.endpoint)
     .setProject(config.projectId)
-    .setPlatform(config.platform)
 
 
 export const database = new sdk.Databases(client);
 export const storage = new sdk.Storage(client);
 export const message = new sdk.Messaging(client);
 export const account = new sdk.Account(client);
-export const id = sdk.ID.unique();
+// export const id = sdk.ID.unique();
 export const avatars = new sdk.Avatars(client)
 
 
 //create a User
-export const createUser = async (email: string, password: string, username: string) => {
+export async function createUser(email: string, password: string, username: string) {
     try {
-        const newAccount = await account.create(id, email, password, username)
+        const newAccount = await account.create(sdk.ID.unique(), email, password, username)
 
         if (!newAccount) throw Error;
-        await signIn(email, password);
 
         const avatarUrl = avatars.getInitials(username)
 
+        await signIn(email, password);
+
+
         const newUser = await database.createDocument(
-            config.databaseId!,
-            config.usersCollectionId!,
-            id!, {
-            accountId: newAccount.$id!,
+            config.databaseId,
+            config.usersCollectionId,
+            sdk.ID.unique(), {
+            accountId: newAccount.$id,
             email,
-            password,
             username,
-            avatar: avatarUrl!
+            avatar: avatarUrl
         });
 
 
@@ -68,12 +69,38 @@ export const createUser = async (email: string, password: string, username: stri
     }
 };
 
-export const signIn = async (email: string, password: string) => {
+export async function signIn(email: string, password: string) {
     try {
         const session = await account.createEmailPasswordSession(email, password)
-        return session;
+        return session
+
     } catch (error) {
         console.log(error)
         throw new Error('Couldnt create session')
     }
 };
+
+export async function getCurrentUser() {
+    try {
+        const currentAccount = await account.get();
+
+        if (!currentAccount) new Error('No account found');
+
+        const currentUser = await database.listDocuments(
+            config.databaseId,
+            config.usersCollectionId,
+            [sdk.Query.equal('accountId', currentAccount.$id)]
+        )
+
+        if (!currentUser || currentUser.documents.length === 0) {
+            throw new Error('No user document found');
+        }
+
+        return currentUser.documents[0]
+
+    } catch (error: any) {
+        console.log('Error fetching current user:', error.message);
+        return null;
+
+    }
+}

@@ -5,12 +5,15 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '@/constants'
 import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
-import { Link, router } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { signIn } from '@/lib/appwrite'
 
 
 
 const SignIn = () => {
+
+
+  const router = useRouter();
 
   const [form, setForm] = useState({
     email: '',
@@ -27,13 +30,11 @@ const SignIn = () => {
     setIsSubmitting(true)
 
     try {
-      const login = await signIn(form.email, form.password)
-      router.replace('/home')
-
+      await signIn(form.email!, form.password!)
+      router.replace('/home') // Replace the current page with '/home'
     } catch (error: any) {
       console.error(error)
       Alert.alert('Error', error.message)
-
     } finally {
       setIsSubmitting(false)
     }

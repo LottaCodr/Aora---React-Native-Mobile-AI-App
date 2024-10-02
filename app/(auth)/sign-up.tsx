@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '@/constants';
 import FormField from '@/components/FormField';
 import CustomButton from '@/components/CustomButton';
-import { Link, router } from 'expo-router';
+import { Link, router, useRouter } from 'expo-router';
 import { createUser } from '@/lib/appwrite';
 
 const SignUp = () => {
@@ -15,8 +15,11 @@ const SignUp = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const submit = async () => {
+
+    
 
     if ( !form.email || !form.password || !form.userName ) {
       Alert.alert('Error', 'Please fill in all fields');
@@ -27,11 +30,8 @@ const SignUp = () => {
 
 
     try {
-
-      const user = await createUser(form.email!, form.password!, form.userName!)
-     
-     
-      router.replace('/home')
+      await createUser(form.email, form.password, form.userName)
+      router.replace( '/home')
 
     } catch (error: any) {
       console.log(error.message)
@@ -52,7 +52,7 @@ const SignUp = () => {
             className="w-[115px] h-[35px]"
           />
           <Text className='text-2xl text-white text-semibold mt-10 font-psemibold'>
-            Log in to Aora
+            Let's get an account
           </Text>
 
           <FormField
