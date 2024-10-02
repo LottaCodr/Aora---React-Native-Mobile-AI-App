@@ -9,13 +9,13 @@ import { View, Text, FlatList, Image, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Home = () => {
-const {data: posts} = useAppwrite(getAllPosts)
+const {data: posts, refetch} = useAppwrite(getAllPosts)
   const [refreshing, setRefreshing] = useState(false)
  
 
   const onRefresh = async () => {
     setRefreshing(true)
-    //recall videos -> if any new videos appeared
+    await refetch();
     setRefreshing(false)
   }
 

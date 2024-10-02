@@ -5,25 +5,27 @@ const  useAppwrite = (fn: any) => {
   const [data, setData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fn();
-        setData(response ?? [])
-  
-      } catch (error: any) {
-        Alert.alert('Error:', error.message)
-  
-      } finally {
-  
-      }
+  const fetchData = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fn();
+      setData(response)
+
+    } catch (error: any) {
+      Alert.alert('Error:', error.message)
+
+    } finally {
+
     }
-  
+  }
+
+  useEffect(() => {
     fetchData();
   }, []);
 
-  return { data }
+  const refetch = () => fetchData(); 
+
+  return { data, isLoading, refetch }
 }
 
 
