@@ -119,3 +119,17 @@ export async function getAllPosts () {
         Alert.alert('Error:', error.message)
     }
 };
+export async function getLatestPosts () {
+    try {
+        const post = await database.listDocuments(
+            config.databaseId,
+            config.videosCollectionId,
+            [sdk.Query.orderDesc('$createdAt'), sdk.Query.limit(7)]
+        )
+
+        return post.documents
+        
+    } catch (error: any) {
+        Alert.alert('Error:', error.message)
+    }
+};
