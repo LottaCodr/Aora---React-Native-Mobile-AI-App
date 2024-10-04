@@ -133,3 +133,4 @@ export async function getLatestPosts () {
         Alert.alert('Error:', error.message)
     }
 };
+

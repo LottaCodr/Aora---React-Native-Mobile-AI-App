@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from '@/constants'
+import { AVPlaybackStatusSuccess, ResizeMode, Video } from 'expo-av'
 
 
 
@@ -17,9 +18,21 @@ type VideoCardProps = {
     }
 }
 
+
+
 const VideoCard = ({ video: { title, thumbnail, video, creator: { username, avatar } } }: VideoCardProps) => {
     const [play, setPlay] = useState(false)
+    const videoRef = React.useRef<Video>(null); // Reference for the Video component
 
+
+    console.log(video)
+
+
+    const handlePlaybackStatusUpdate = (status: AVPlaybackStatusSuccess | any) => {
+        if (status.isLoaded && status.didJustFinish) { 
+            setPlay(true);
+        }
+    };
 
     return (
         <View className='flex-col items-center px-4 mb-14'>
@@ -44,7 +57,15 @@ const VideoCard = ({ video: { title, thumbnail, video, creator: { username, avat
             </View>
 
             {play ? 
-            <Text> Playing</Text>
+            <Video
+            ref={videoRef}
+            source={{ uri: video}}
+            className='w-full h-60 rounded-xl mt-3'
+            resizeMode={ResizeMode.CONTAIN}
+            useNativeControls
+            shouldPlay
+            onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
+            />
         :
         <TouchableOpacity className='w-full h-60 rounded-xl mt-3 relative justify-center items-center
         '>

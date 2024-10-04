@@ -71,7 +71,7 @@ const Home = () => {
 
               <Trending
                 posts={
-                  latestPosts
+                  latestPosts ?? []
                 }
               />
             </View>
