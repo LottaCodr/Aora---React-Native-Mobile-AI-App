@@ -1,6 +1,7 @@
 import { icons } from '@/constants'
+import { router, usePathname } from 'expo-router';
 import { useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, Image, TextInputProps } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, Image, TextInputProps, Alert } from 'react-native'
 
 
 interface SearchInputProps {
@@ -14,9 +15,10 @@ interface SearchInputProps {
 
 }
 
-const SearchInput = ({ title, value, placeholder, handleChangeText, otherStyles, keyboardType, ...props }: SearchInputProps) => {
+const SearchInput = ({ initialQuery}: any) => {
 
-    const [showPassword, setShowPassword] = useState(false)
+    const pathname = usePathname()
+    const [query, setQuery] = useState(initialQuery || '')
 
     return (
 
@@ -27,18 +29,25 @@ const SearchInput = ({ title, value, placeholder, handleChangeText, otherStyles,
             <TextInput
 
                 className='tex-base mt-0.5 text-white flex-1 font-pregular'
-                value={value}
-                placeholder='Search for a videos topic'
-                placeholderTextColor='#7b7b8b'
-                onChangeText={handleChangeText}
-                secureTextEntry={title === 'Password' && !showPassword}
-                keyboardType={keyboardType}  // Setting the keyboard type
+                value={query}
+                placeholder='Search for a video topic'
+                placeholderTextColor='#CDCDE0'
+                onChangeText={(e) => setQuery(e)}
                 autoCapitalize="none"  // Prevent auto-capitalization for email fields
                 autoCorrect={false}    // Disable autocorrect for email input
             />
 
 
-            <TouchableOpacity>
+            <TouchableOpacity
+            onPress={()=> {
+                if(!query) {
+                    return Alert.alert('Missing query', "Please input something to search results from the database")
+                }
+
+                if(pathname.startsWith('/search')) router.setParams({ query })
+                else router.push(`/search/${query}`)
+            }}
+            >
                 <Image
                     source={icons.search}
                     className='w-6 h-6 '

@@ -133,4 +133,18 @@ export async function getLatestPosts () {
         Alert.alert('Error:', error.message)
     }
 };
+export async function searchPosts (query: any) {
+    try {
+        const post = await database.listDocuments(
+            config.databaseId,
+            config.videosCollectionId,
+            [sdk.Query.search('title', query)]
+        )
+
+        return post.documents
+        
+    } catch (error: any) {
+        Alert.alert('Error:', error.message)
+    }
+};
 
