@@ -148,3 +148,18 @@ export async function searchPosts (query: any) {
     }
 };
 
+export async function userPosts (userId: any) {
+    try {
+        const post = await database.listDocuments(
+            config.databaseId,
+            config.videosCollectionId,
+            [sdk.Query.equal('creator', userId)]
+        )
+
+        return post.documents
+        
+    } catch (error: any) {
+        Alert.alert('Error:', error.message)
+    }
+};
+

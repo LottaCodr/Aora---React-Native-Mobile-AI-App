@@ -3,11 +3,10 @@
 import EmptyState from '@/components/EmptyState'
 import SearchInput from '@/components/SearchInput'
 import VideoCard from '@/components/VideoCard'
-// import { images } from '@/constants'
 import { searchPosts } from '@/lib/appwrite'
 import useAppwrite from '@/lib/useAppwrite'
-import { useEffect, useState } from 'react'
-import { View, Text, FlatList, Image, RefreshControl, ActivityIndicator } from 'react-native'
+import { useEffect } from 'react'
+import { View, Text, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useLocalSearchParams } from 'expo-router'
