@@ -34,7 +34,7 @@ export const database = new sdk.Databases(client);
 export const storage = new sdk.Storage(client);
 export const message = new sdk.Messaging(client);
 export const account = new sdk.Account(client);
-// export const id = sdk.ID.unique();
+export const id = sdk.ID.unique();
 export const avatars = new sdk.Avatars(client)
 
 
@@ -224,6 +224,18 @@ try {
         uploadFile(form.thumbnail, 'image'),
         uploadFile(form.video, 'video'),
     ])
+
+    const newPost = await database.createDocument(
+        DATABASE_ID!, VIDEOS_COLLECTION_ID!, id, {
+            title: form.title,
+            thumbnail: thumbnailUrl,
+            video: videoUrl,
+            prompt: form.prompt,
+            creator: form.userId
+        }
+    )
+
+    return newPost
 } catch (error: any) {
     Alert.alert('Creation Error', error.message)
     
