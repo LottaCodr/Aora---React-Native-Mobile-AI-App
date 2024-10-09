@@ -174,10 +174,56 @@ export const sigOut = async () => {
     }
 }
 
+export const getFilePreview = async (fileId: any, type: any) => {
+    let fileUrl;
+
+    try {
+        if( type === 'video') {
+fileUrl = storage.getFileView(STORAGE_ID!, fileId)
+        } else if (type === 'image') {
+            fileUrl = storage.getFilePreview(STORAGE_ID!, fileId, 2000, 2000, 'top', 100)
+
+        } else {
+            throw new Error ('Invalid file type')
+        }
+
+        if(!fileUrl) throw Error;
+
+        return fileUrl
+    } catch (error: any) {
+        Alert.alert('FilePreview Error', error.message)
+        
+    }
+}
+
+export const uploadFile = async (file: any, type: any) => {
+ if(!file) return;
+
+ const { mimeType, ...all } = file
+ const asset = { type: mimeType, ...all}
+
+ try {
+    const uploadedFile = await storage.createFile(
+        STORAGE_ID!,
+        sdk.ID.unique(),
+        asset
+    )
+
+    const fileUrl = await getFilePreview(uploadedFile.$id, type)
+    return fileUrl
+    
+ } catch (error: any) {
+    Alert.alert('Upload Error', error.message)
+    
+ }
+}
 
 export const createVideo = async (form: any) => {
 try {
-    
+    const [thumbnailUrl, videoUrl] = await Promise.all([
+        uploadFile(form.thumbnail, 'image'),
+        uploadFile(form.video, 'video'),
+    ])
 } catch (error: any) {
     Alert.alert('Creation Error', error.message)
     
