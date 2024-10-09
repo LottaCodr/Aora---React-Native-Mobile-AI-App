@@ -163,3 +163,23 @@ export async function userPosts (userId: any) {
     }
 };
 
+
+export const sigOut = async () => {
+    try {
+    const session = await account.deleteSession('current');
+    
+    return session;
+    } catch (error: any) {
+        Alert.alert('Error', error.message)
+    }
+}
+
+
+export const createVideo = async (form: any) => {
+try {
+    
+} catch (error: any) {
+    Alert.alert('Creation Error', error.message)
+    
+}
+}
